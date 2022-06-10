@@ -1,24 +1,58 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { Routes, Route } from 'react-router-dom'
+import Layout from './Layouts/Layout'
+import Home from './Pages/Home'
+import BurgerMaker from "./Pages/BurgerMaker";
+import BurgerContext from './Contex/BurgerContext'
 
 function App() {
+
+  const [ingredients, setIngredients] = useState([])
+
+  const addIngredientsHandler = (ingredient) => {
+    setIngredients ( prevState => {
+      const newState = [ingredient, ...prevState]
+      return newState
+    })
+  }
+  const removeIngredientsHandler = (index) => {
+    setIngredients ( prevState => {
+      const newState = [...prevState]
+      newState.splice(index, 1)
+      return newState
+    })
+  }
+
+  const moveUpIngredientsHandler = (index) => {
+    setIngredients (prevState => {
+      const newState = [...prevState]
+      const temp = newState[index-1]
+      newState[index-1] = newState[index]
+      newState[index] = temp
+      return newState
+    }) 
+  }
+
+  const moveDownIngredientsHandler = (index) => {
+    setIngredients( prevState => {
+      const newState = [...prevState]
+      const temp = newState[index+1]
+      newState[index+1]=newState[index]
+      newState[index] = temp
+      return newState
+    })
+  }
+  
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BurgerContext.Provider value={ {ingredients, setIngredients, addIngredientsHandler, removeIngredientsHandler, moveUpIngredientsHandler, moveDownIngredientsHandler}}>
+      <Layout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/burger-maker" element={<BurgerMaker />}/>
+          </Routes>
+      </Layout>
+    </BurgerContext.Provider>
   );
 }
 
